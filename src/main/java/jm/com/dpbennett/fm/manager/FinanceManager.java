@@ -34,10 +34,13 @@ import jm.com.dpbennett.business.entity.Discount;
 import jm.com.dpbennett.business.entity.JobManagerUser;
 import jm.com.dpbennett.business.entity.Tax;
 import jm.com.dpbennett.sm.manager.SystemManager;
+import jm.com.dpbennett.sm.manager.SystemManager.LoginActionListener;
+import jm.com.dpbennett.sm.manager.SystemManager.SearchActionListener;
 import jm.com.dpbennett.sm.util.BeanUtils;
 import jm.com.dpbennett.sm.util.FinancialUtils;
 import jm.com.dpbennett.sm.util.MainTabView;
 import jm.com.dpbennett.sm.util.PrimeFacesUtils;
+import jm.com.dpbennett.sm.util.TabPanel;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.PrimeFaces;
 
@@ -45,7 +48,8 @@ import org.primefaces.PrimeFaces;
  *
  * @author Desmond Bennett
  */
-public class FinanceManager implements Serializable {
+public class FinanceManager implements Serializable,
+        SearchActionListener, LoginActionListener {
 
     @PersistenceUnit(unitName = "JMTSPU")
     private EntityManagerFactory EMF1;
@@ -78,6 +82,11 @@ public class FinanceManager implements Serializable {
      */
     public FinanceManager() {
         init();
+    }
+    
+    public String getApplicationHeader() {
+
+        return "Financial Management";
     }
 
     /**
@@ -230,7 +239,7 @@ public class FinanceManager implements Serializable {
         PrimeFaces.current().dialog().closeDynamic(null);
 
     }
-    
+
     public void saveSelectedCurrency() {
 
         selectedCurrency.save(getEntityManager1());
@@ -551,6 +560,8 @@ public class FinanceManager implements Serializable {
         isActiveTaxesOnly = true;
         isActiveCurrenciesOnly = true;
         isActiveAccountingCodesOnly = true;
+        
+        getSystemManager().addSingleLoginActionListener(this);
     }
 
     public Boolean getIsActiveAccountingCodesOnly() {
@@ -629,6 +640,55 @@ public class FinanceManager implements Serializable {
 
     public EntityManager getEntityManager2() {
         return EMF2.createEntityManager();
+    }
+
+    @Override
+    public void doDefaultSearch() {
+        switch (getSystemManager().getDashboard().getSelectedTabId()) {
+            case "Financial Management":
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void doLogin() {
+        initDashboard();
+        initMainTabView();
+
+        getSystemManager().addSingleSearchActionListener(this);
+    }
+
+    private void initDashboard() {
+
+        getSystemManager().getDashboard().reset(getUser());
+
+        if (getUser().getModules().getFinancialAdminModule()) {
+            getSystemManager().addDashboardTab(
+                    new TabPanel("Financial Administration", "Financial Administration"));
+        }
+
+        if (getUser().getModules().getAdminModule()) {
+            getSystemManager().addDashboardTab(
+                    new TabPanel("System Administration", "System Administration"));
+        }
+
+    }
+
+    private void initMainTabView() {
+
+        getSystemManager().getMainTabView().reset(getUser());
+
+        if (getUser().getModules().getAdminModule()) {
+            getMainTabView().openTab("System Administration");
+        }
+        
+        if (getUser().getModules().getFinancialAdminModule()) {
+            getMainTabView().openTab("Financial Administration");
+        }
+
     }
 
 }
