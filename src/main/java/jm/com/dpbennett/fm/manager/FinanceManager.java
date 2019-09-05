@@ -28,11 +28,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import jm.com.dpbennett.business.entity.AccountingCode;
+import jm.com.dpbennett.business.entity.Classification;
 import jm.com.dpbennett.business.entity.Currency;
 import jm.com.dpbennett.business.entity.DatePeriod;
 import jm.com.dpbennett.business.entity.Discount;
 import jm.com.dpbennett.business.entity.JobManagerUser;
+import jm.com.dpbennett.business.entity.Sector;
+import jm.com.dpbennett.business.entity.Service;
 import jm.com.dpbennett.business.entity.Tax;
+import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.sm.manager.SystemManager;
 import jm.com.dpbennett.sm.manager.SystemManager.LoginActionListener;
 import jm.com.dpbennett.sm.manager.SystemManager.SearchActionListener;
@@ -60,22 +64,34 @@ public class FinanceManager implements Serializable,
     private Tax selectedTax;
     private Discount selectedDiscount;
     private Currency selectedCurrency;
+    private Classification selectedClassification;
+    private Sector selectedSector;
     private Boolean edit;
     private String searchText;
     private String accountingCodeSearchText;
     private String taxSearchText;
     private String currencySearchText;
     private String discountSearchText;
+    private String classificationSearchText;
+    private String sectorSearchText;
     private List<AccountingCode> foundAccountingCodes;
     private List<Tax> foundTaxes;
     private List<Discount> foundDiscounts;
     private List<Currency> foundCurrencies;
+    private List<Classification> foundClassifications;
+    private List<Sector> foundSectors;
+    private List<Service> foundServices;
     private String searchType;
     private DatePeriod dateSearchPeriod;
     private Boolean isActiveDiscountsOnly;
     private Boolean isActiveTaxesOnly;
     private Boolean isActiveCurrenciesOnly;
     private Boolean isActiveAccountingCodesOnly;
+    private Boolean isActiveClassificationsOnly;
+    private Boolean isActiveJobCategoriesOnly;
+    private Boolean isActiveJobSubcategoriesOnly;
+    private Boolean isActiveSectorsOnly;
+    private Boolean isActiveServicesOnly;
 
     /**
      * Creates a new instance of JobManagerBean
@@ -83,10 +99,120 @@ public class FinanceManager implements Serializable,
     public FinanceManager() {
         init();
     }
-    
+
+    public List<Classification> getClassifications() {
+        return Classification.findAllClassifications(getEntityManager1());
+    }
+
+    public void saveSelectedClassification() {
+
+        selectedClassification.save(getEntityManager1());
+
+        PrimeFaces.current().dialog().closeDynamic(null);
+
+    }
+
+    public void cancelClassificationEdit(ActionEvent actionEvent) {
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
+
+    public void editClassification() {
+        PrimeFacesUtils.openDialog(null, "classificationDialog", true, true, true, 350, 600);
+    }
+
+    public void onClassificationCellEdit(CellEditEvent event) {
+        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(), getFoundClassifications().get(event.getRowIndex()));
+    }
+
+    public Boolean getIsActiveClassificationsOnly() {
+        return isActiveClassificationsOnly;
+    }
+
+    public void setIsActiveClassificationsOnly(Boolean isActiveClassificationsOnly) {
+        this.isActiveClassificationsOnly = isActiveClassificationsOnly;
+    }
+
+    public Boolean getIsActiveJobCategoriesOnly() {
+        return isActiveJobCategoriesOnly;
+    }
+
+    public void setIsActiveJobCategoriesOnly(Boolean isActiveJobCategoriesOnly) {
+        this.isActiveJobCategoriesOnly = isActiveJobCategoriesOnly;
+    }
+
+    public Boolean getIsActiveJobSubcategoriesOnly() {
+        return isActiveJobSubcategoriesOnly;
+    }
+
+    public void setIsActiveJobSubcategoriesOnly(Boolean isActiveJobSubcategoriesOnly) {
+        this.isActiveJobSubcategoriesOnly = isActiveJobSubcategoriesOnly;
+    }
+
+    public Boolean getIsActiveSectorsOnly() {
+        return isActiveSectorsOnly;
+    }
+
+    public void setIsActiveSectorsOnly(Boolean isActiveSectorsOnly) {
+        this.isActiveSectorsOnly = isActiveSectorsOnly;
+    }
+
+    public Boolean getIsActiveServicesOnly() {
+        return isActiveServicesOnly;
+    }
+
+    public void setIsActiveServicesOnly(Boolean isActiveServicesOnly) {
+        this.isActiveServicesOnly = isActiveServicesOnly;
+    }
+
+    public List getClassificationCategories() {
+        return getCategories();
+    }
+
+    public static List getCategories() {
+        ArrayList categories = new ArrayList();
+
+        categories.add(new SelectItem("", ""));
+        categories.add(new SelectItem("Client", "Client"));
+        categories.add(new SelectItem("Job", "Job"));
+        categories.add(new SelectItem("Legal", "Legal"));
+
+        return categories;
+    }
+
+    public void doClassificationSearch() {
+
+        if (getIsActiveClassificationsOnly()) {
+            foundClassifications = Classification.findActiveClassificationsByName(getEntityManager1(), getClassificationSearchText());
+        } else {
+            foundClassifications = Classification.findClassificationsByName(getEntityManager1(), getClassificationSearchText());
+        }
+
+    }
+
+    public List<Classification> getFoundClassifications() {
+        if (foundClassifications == null) {
+            foundClassifications = Classification.findAllActiveClassifications(getEntityManager1());
+        }
+        return foundClassifications;
+    }
+
+    public Classification getSelectedClassification() {
+        return selectedClassification;
+    }
+
+    public void setSelectedClassification(Classification selectedClassification) {
+        this.selectedClassification = selectedClassification;
+    }
+
     public String getApplicationHeader() {
 
         return "Financial Management";
+    }
+
+    public void createNewClassification() {
+        selectedClassification = new Classification();
+
+        editClassification();
     }
 
     /**
@@ -552,6 +678,8 @@ public class FinanceManager implements Serializable,
         taxSearchText = "";
         currencySearchText = "";
         discountSearchText = "";
+        classificationSearchText = "";
+        sectorSearchText = "";
         searchType = "Purchase requisitions";
         dateSearchPeriod = new DatePeriod("This year", "year",
                 "requisitionDate", null, null, null, false, false, false);
@@ -560,8 +688,100 @@ public class FinanceManager implements Serializable,
         isActiveTaxesOnly = true;
         isActiveCurrenciesOnly = true;
         isActiveAccountingCodesOnly = true;
-        
+        isActiveJobCategoriesOnly = true;
+        isActiveJobSubcategoriesOnly = true;
+        isActiveSectorsOnly = true;
+        isActiveServicesOnly = true;
+        isActiveClassificationsOnly = true;
+
         getSystemManager().addSingleLoginActionListener(this);
+    }
+
+    public String getSectorSearchText() {
+        return sectorSearchText;
+    }
+
+    public void setSectorSearchText(String sectorSearchText) {
+        this.sectorSearchText = sectorSearchText;
+    }
+
+    public Sector getSelectedSector() {
+        return selectedSector;
+    }
+
+    public void setSelectedSector(Sector selectedSector) {
+        this.selectedSector = selectedSector;
+    }
+
+    public List<Sector> getFoundSectors() {
+        if (foundSectors == null) {
+            foundSectors = Sector.findAllActiveSectors(getEntityManager1());
+        }
+        return foundSectors;
+    }
+
+    public void setFoundSectors(List<Sector> foundSectors) {
+        this.foundSectors = foundSectors;
+    }
+    
+    public void onSectorCellEdit(CellEditEvent event) {
+        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(), getFoundSectors().get(event.getRowIndex()));
+    }
+    
+    public void doSectorSearch() {
+
+        if (getIsActiveSectorsOnly()) {
+            foundSectors = Sector.findActiveSectorsByName(getEntityManager1(), getSectorSearchText());
+        } else {
+            foundSectors = Sector.findSectorsByName(getEntityManager1(), getSectorSearchText());
+        }
+
+    }
+    
+    public void cancelSectorEdit(ActionEvent actionEvent) {
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
+    
+    public void saveSelectedSector() {
+
+        selectedSector.save(getEntityManager1());
+
+        PrimeFaces.current().dialog().closeDynamic(null);
+
+    }
+    
+    public void createNewSector() {
+        selectedSector = new Sector();
+
+        editSector();
+    }
+    
+    public void editSector() {
+        PrimeFacesUtils.openDialog(null, "sectorDialog", true, true, true, 275, 600);
+    }
+
+    public List<Tax> completeTax(String query) {
+        EntityManager em;
+
+        try {
+            em = getEntityManager1();
+
+            List<Tax> taxes = Tax.findTaxesByNameAndDescription(em, query);
+
+            return taxes;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+    }
+
+    public String getClassificationSearchText() {
+        return classificationSearchText;
+    }
+
+    public void setClassificationSearchText(String classificationSearchText) {
+        this.classificationSearchText = classificationSearchText;
     }
 
     public Boolean getIsActiveAccountingCodesOnly() {
@@ -684,7 +904,7 @@ public class FinanceManager implements Serializable,
         if (getUser().getModules().getAdminModule()) {
             getMainTabView().openTab("System Administration");
         }
-        
+
         if (getUser().getModules().getFinancialAdminModule()) {
             getMainTabView().openTab("Financial Administration");
         }
