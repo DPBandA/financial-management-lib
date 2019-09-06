@@ -32,7 +32,9 @@ import jm.com.dpbennett.business.entity.Classification;
 import jm.com.dpbennett.business.entity.Currency;
 import jm.com.dpbennett.business.entity.DatePeriod;
 import jm.com.dpbennett.business.entity.Discount;
+import jm.com.dpbennett.business.entity.JobCategory;
 import jm.com.dpbennett.business.entity.JobManagerUser;
+import jm.com.dpbennett.business.entity.JobSubCategory;
 import jm.com.dpbennett.business.entity.Sector;
 import jm.com.dpbennett.business.entity.Service;
 import jm.com.dpbennett.business.entity.Tax;
@@ -66,6 +68,9 @@ public class FinanceManager implements Serializable,
     private Currency selectedCurrency;
     private Classification selectedClassification;
     private Sector selectedSector;
+    private JobCategory selectedJobCategory;
+    private JobSubCategory selectedJobSubcategory;
+    private Service selectedService;
     private Boolean edit;
     private String searchText;
     private String accountingCodeSearchText;
@@ -74,12 +79,17 @@ public class FinanceManager implements Serializable,
     private String discountSearchText;
     private String classificationSearchText;
     private String sectorSearchText;
+    private String jobCategorySearchText;
+    private String jobSubcategorySearchText;
+    private String serviceSearchText;
     private List<AccountingCode> foundAccountingCodes;
     private List<Tax> foundTaxes;
     private List<Discount> foundDiscounts;
     private List<Currency> foundCurrencies;
     private List<Classification> foundClassifications;
     private List<Sector> foundSectors;
+    private List<JobCategory> foundJobCategories;
+    private List<JobSubCategory> foundJobSubcategories;
     private List<Service> foundServices;
     private String searchType;
     private DatePeriod dateSearchPeriod;
@@ -98,6 +108,83 @@ public class FinanceManager implements Serializable,
      */
     public FinanceManager() {
         init();
+    }
+
+    public String getServiceSearchText() {
+        return serviceSearchText;
+    }
+
+    public void setServiceSearchText(String serviceSearchText) {
+        this.serviceSearchText = serviceSearchText;
+    }
+
+    public List<Service> completeService(String query) {
+
+        try {
+            return Service.findAllByName(getEntityManager1(), query);
+        } catch (Exception e) {
+            System.out.println(e);
+
+            return new ArrayList<>();
+        }
+    }
+
+    public Boolean getIsActiveServicesOnly() {
+        return isActiveServicesOnly;
+    }
+
+    public void setIsActiveServicesOnly(Boolean isActiveServicesOnly) {
+        this.isActiveServicesOnly = isActiveServicesOnly;
+    }
+
+    public Service getSelectedService() {
+        return selectedService;
+    }
+
+    public void setSelectedService(Service selectedService) {
+        this.selectedService = selectedService;
+    }
+
+    public List<Service> getFoundServices() {
+        if (foundServices == null) {
+            foundServices = Service.findAllActive(getEntityManager1());
+        }
+        return foundServices;
+    }
+
+    public void setFoundServices(List<Service> foundServices) {
+        this.foundServices = foundServices;
+    }
+    
+    public void onServiceCellEdit(CellEditEvent event) {
+        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(), 
+                getFoundServices().get(event.getRowIndex()));
+    }
+    
+    public void doServiceSearch() {
+        if (getIsActiveServicesOnly()) {
+            foundServices = Service.findAllActiveByName(getEntityManager1(), getServiceSearchText());
+        } else {
+            foundServices = Service.findAllByName(getEntityManager1(), getServiceSearchText());
+        }
+    }
+    
+    public void saveSelectedService() {
+
+        selectedService.save(getEntityManager1());
+
+        PrimeFaces.current().dialog().closeDynamic(null);
+
+    }
+    
+    public void createNewService() {
+        selectedService = new Service();
+
+       editService();
+    }
+    
+    public void editService() {
+        PrimeFacesUtils.openDialog(null, "serviceDialog", true, true, true, 0, 600);
     }
 
     public List<Classification> getClassifications() {
@@ -154,14 +241,6 @@ public class FinanceManager implements Serializable,
 
     public void setIsActiveSectorsOnly(Boolean isActiveSectorsOnly) {
         this.isActiveSectorsOnly = isActiveSectorsOnly;
-    }
-
-    public Boolean getIsActiveServicesOnly() {
-        return isActiveServicesOnly;
-    }
-
-    public void setIsActiveServicesOnly(Boolean isActiveServicesOnly) {
-        this.isActiveServicesOnly = isActiveServicesOnly;
     }
 
     public List getClassificationCategories() {
@@ -680,6 +759,9 @@ public class FinanceManager implements Serializable,
         discountSearchText = "";
         classificationSearchText = "";
         sectorSearchText = "";
+        jobCategorySearchText = "";
+        jobSubcategorySearchText = "";
+        serviceSearchText = "";
         searchType = "Purchase requisitions";
         dateSearchPeriod = new DatePeriod("This year", "year",
                 "requisitionDate", null, null, null, false, false, false);
@@ -695,6 +777,129 @@ public class FinanceManager implements Serializable,
         isActiveClassificationsOnly = true;
 
         getSystemManager().addSingleLoginActionListener(this);
+    }
+
+    public String getJobCategorySearchText() {
+        return jobCategorySearchText;
+    }
+
+    public void setJobCategorySearchText(String jobCategorySearchText) {
+        this.jobCategorySearchText = jobCategorySearchText;
+    }
+
+    public JobCategory getSelectedJobCategory() {
+        return selectedJobCategory;
+    }
+
+    public void setSelectedJobCategory(JobCategory selectedJobCategory) {
+        this.selectedJobCategory = selectedJobCategory;
+    }
+
+    public List<JobCategory> getFoundJobCategories() {
+        if (foundJobCategories == null) {
+            foundJobCategories = JobCategory.findAllActiveJobCategories(getEntityManager1());
+        }
+        return foundJobCategories;
+    }
+
+    public void setFoundJobCategories(List<JobCategory> foundJobCategories) {
+        this.foundJobCategories = foundJobCategories;
+    }
+
+    public void onJobCategoryCellEdit(CellEditEvent event) {
+        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(), getFoundJobCategories().get(event.getRowIndex()));
+    }
+
+    public void doJobCategorySearch() {
+
+        if (getIsActiveJobCategoriesOnly()) {
+            foundJobCategories = JobCategory.findActiveJobCategoriesByName(getEntityManager1(), getJobCategorySearchText());
+        } else {
+            foundJobCategories = JobCategory.findJobCategoriesByName(getEntityManager1(), getJobCategorySearchText());
+        }
+
+    }
+
+    public void cancelJobCategoryEdit(ActionEvent actionEvent) {
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
+
+    public void saveSelectedJobCategory() {
+
+        selectedJobCategory.save(getEntityManager1());
+
+        PrimeFaces.current().dialog().closeDynamic(null);
+
+    }
+
+    public void createNewJobCategory() {
+        selectedJobCategory = new JobCategory();
+
+        editJobCategory();
+    }
+
+    public void editJobCategory() {
+        PrimeFacesUtils.openDialog(null, "jobCategoryDialog", true, true, true, 300, 500);
+    }
+
+    public List<JobSubCategory> getFoundJobSubcategories() {
+        if (foundJobSubcategories == null) {
+            foundJobSubcategories = JobSubCategory.findAllActiveJobSubCategories(getEntityManager1());
+        }
+        return foundJobSubcategories;
+    }
+
+    public JobSubCategory getSelectedJobSubcategory() {
+        return selectedJobSubcategory;
+    }
+
+    public void setSelectedJobSubcategory(JobSubCategory selectedJobSubcategory) {
+        this.selectedJobSubcategory = selectedJobSubcategory;
+    }
+
+    public String getJobSubcategorySearchText() {
+        return jobSubcategorySearchText;
+    }
+
+    public void setJobSubcategorySearchText(String jobSubcategorySearchText) {
+        this.jobSubcategorySearchText = jobSubcategorySearchText;
+    }
+
+    public void onJobSubCategoryCellEdit(CellEditEvent event) {
+        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(),
+                getFoundJobSubcategories().get(event.getRowIndex()));
+    }
+
+    public void doJobSubcategorySearch() {
+
+        if (getIsActiveJobSubcategoriesOnly()) {
+            foundJobSubcategories = JobSubCategory.findActiveJobSubcategoriesByName(getEntityManager1(), getJobSubcategorySearchText());
+        } else {
+            foundJobSubcategories = JobSubCategory.findJobSubcategoriesByName(getEntityManager1(), getJobSubcategorySearchText());
+        }
+
+    }
+
+    public void cancelJobSubcategoryEdit(ActionEvent actionEvent) {
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
+
+    public void saveSelectedJobSubcategory() {
+
+        selectedJobSubcategory.save(getEntityManager1());
+
+        PrimeFaces.current().dialog().closeDynamic(null);
+
+    }
+
+    public void createNewJobSubCategory() {
+        selectedJobSubcategory = new JobSubCategory();
+
+        editJobSubcategory();
+    }
+
+    public void editJobSubcategory() {
+        PrimeFacesUtils.openDialog(null, "jobSubcategoryDialog", true, true, true, 300, 500);
     }
 
     public String getSectorSearchText() {
@@ -723,11 +928,11 @@ public class FinanceManager implements Serializable,
     public void setFoundSectors(List<Sector> foundSectors) {
         this.foundSectors = foundSectors;
     }
-    
+
     public void onSectorCellEdit(CellEditEvent event) {
         BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(), getFoundSectors().get(event.getRowIndex()));
     }
-    
+
     public void doSectorSearch() {
 
         if (getIsActiveSectorsOnly()) {
@@ -737,11 +942,11 @@ public class FinanceManager implements Serializable,
         }
 
     }
-    
+
     public void cancelSectorEdit(ActionEvent actionEvent) {
         PrimeFaces.current().dialog().closeDynamic(null);
     }
-    
+
     public void saveSelectedSector() {
 
         selectedSector.save(getEntityManager1());
@@ -749,13 +954,13 @@ public class FinanceManager implements Serializable,
         PrimeFaces.current().dialog().closeDynamic(null);
 
     }
-    
+
     public void createNewSector() {
         selectedSector = new Sector();
 
         editSector();
     }
-    
+
     public void editSector() {
         PrimeFacesUtils.openDialog(null, "sectorDialog", true, true, true, 275, 600);
     }
