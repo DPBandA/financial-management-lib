@@ -1088,27 +1088,26 @@ public class FinanceManager implements Serializable,
 
     private void initDashboard() {
 
-        getSystemManager().getDashboard().reset(getUser());
+        //getSystemManager().getDashboard().reset(getUser());
 
         if (getUser().getModules().getFinancialAdminModule()) {
-            getSystemManager().addDashboardTab(
-                    new TabPanel("Financial Administration", "Financial Administration"));
+            getSystemManager().getDashboard().openTab("Financial Administration");
         }
 
-        if (getUser().getModules().getAdminModule()) {
-            getSystemManager().addDashboardTab(
-                    new TabPanel("System Administration", "System Administration"));
-        }
+//        if (getUser().getModules().getAdminModule()) {
+//            getSystemManager().addDashboardTab(
+//                    new TabPanel("System Administration", "System Administration"));
+//        }
 
     }
 
     private void initMainTabView() {
 
-        getSystemManager().getMainTabView().reset(getUser());
-
-        if (getUser().getModules().getAdminModule()) {
-            getMainTabView().openTab("System Administration");
-        }
+        //getSystemManager().getMainTabView().reset(getUser());
+//
+//        if (getUser().getModules().getAdminModule()) {
+//            getMainTabView().openTab("System Administration");
+//        }
 
         if (getUser().getModules().getFinancialAdminModule()) {
             getMainTabView().openTab("Financial Administration");
