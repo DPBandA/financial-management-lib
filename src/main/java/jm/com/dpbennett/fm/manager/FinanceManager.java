@@ -1,6 +1,6 @@
 /*
-Job Management & Tracking System (JMTS) 
-Copyright (C) 2017  D P Bennett & Associates Limited
+Financial Management (FM) 
+Copyright (C) 2019  D P Bennett & Associates Limited
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -46,7 +46,6 @@ import jm.com.dpbennett.sm.util.BeanUtils;
 import jm.com.dpbennett.sm.util.FinancialUtils;
 import jm.com.dpbennett.sm.util.MainTabView;
 import jm.com.dpbennett.sm.util.PrimeFacesUtils;
-import jm.com.dpbennett.sm.util.TabPanel;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.PrimeFaces;
 
@@ -155,12 +154,12 @@ public class FinanceManager implements Serializable,
     public void setFoundServices(List<Service> foundServices) {
         this.foundServices = foundServices;
     }
-    
+
     public void onServiceCellEdit(CellEditEvent event) {
-        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(), 
+        BusinessEntityUtils.saveBusinessEntityInTransaction(getEntityManager1(),
                 getFoundServices().get(event.getRowIndex()));
     }
-    
+
     public void doServiceSearch() {
         if (getIsActiveServicesOnly()) {
             foundServices = Service.findAllActiveByName(getEntityManager1(), getServiceSearchText());
@@ -168,7 +167,7 @@ public class FinanceManager implements Serializable,
             foundServices = Service.findAllByName(getEntityManager1(), getServiceSearchText());
         }
     }
-    
+
     public void saveSelectedService() {
 
         selectedService.save(getEntityManager1());
@@ -176,13 +175,13 @@ public class FinanceManager implements Serializable,
         PrimeFaces.current().dialog().closeDynamic(null);
 
     }
-    
+
     public void createNewService() {
         selectedService = new Service();
 
-       editService();
+        editService();
     }
-    
+
     public void editService() {
         PrimeFacesUtils.openDialog(null, "serviceDialog", true, true, true, 0, 600);
     }
@@ -401,7 +400,6 @@ public class FinanceManager implements Serializable,
     }
 
     public void updateDateSearchField() {
-        //doSearch();
     }
 
     public ArrayList getSearchTypes() {
@@ -720,14 +718,7 @@ public class FinanceManager implements Serializable,
     public void doSearch() {
 
         switch (searchType) {
-            case "Purchase requisitions":
-                //getPurchasingManager().doPurchaseReqSearch(dateSearchPeriod, searchType, searchText, null);
-                //getPurchasingManager().openPurchaseReqsTab();
-                break;
-            case "Suppliers":
-                //getPurchasingManager().doSupplierSearch(searchText);
-                //getPurchasingManager().openSuppliersTab();
-                break;
+            
             default:
                 break;
         }
@@ -777,6 +768,7 @@ public class FinanceManager implements Serializable,
         isActiveClassificationsOnly = true;
 
         getSystemManager().addSingleLoginActionListener(this);
+        getSystemManager().addSingleSearchActionListener(this);
     }
 
     public String getJobCategorySearchText() {
@@ -1041,6 +1033,7 @@ public class FinanceManager implements Serializable,
         return getSystemManager().getUser();
     }
 
+    // tk not used so to be deleted
     public Integer getLongProcessProgress() {
         if (longProcessProgress == null) {
             longProcessProgress = 0;
@@ -1055,6 +1048,7 @@ public class FinanceManager implements Serializable,
         return longProcessProgress;
     }
 
+    // tk not used so to be deleted
     public void onLongProcessComplete() {
         longProcessProgress = 0;
     }
@@ -1081,33 +1075,18 @@ public class FinanceManager implements Serializable,
     @Override
     public void doLogin() {
         initDashboard();
-        initMainTabView();
-
-        getSystemManager().addSingleSearchActionListener(this);
+        initMainTabView();        
     }
 
     private void initDashboard() {
-
-        //getSystemManager().getDashboard().reset(getUser());
 
         if (getUser().getModules().getFinancialAdminModule()) {
             getSystemManager().getDashboard().openTab("Financial Administration");
         }
 
-//        if (getUser().getModules().getAdminModule()) {
-//            getSystemManager().addDashboardTab(
-//                    new TabPanel("System Administration", "System Administration"));
-//        }
-
     }
 
     private void initMainTabView() {
-
-        //getSystemManager().getMainTabView().reset(getUser());
-//
-//        if (getUser().getModules().getAdminModule()) {
-//            getMainTabView().openTab("System Administration");
-//        }
 
         if (getUser().getModules().getFinancialAdminModule()) {
             getMainTabView().openTab("Financial Administration");
