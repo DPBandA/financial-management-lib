@@ -41,7 +41,6 @@ import jm.com.dpbennett.business.entity.Tax;
 import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
 import jm.com.dpbennett.sm.manager.SystemManager;
 import jm.com.dpbennett.sm.manager.SystemManager.LoginActionListener;
-import jm.com.dpbennett.sm.manager.SystemManager.SearchActionListener;
 import jm.com.dpbennett.sm.util.BeanUtils;
 import jm.com.dpbennett.sm.util.FinancialUtils;
 import jm.com.dpbennett.sm.util.MainTabView;
@@ -53,8 +52,7 @@ import org.primefaces.PrimeFaces;
  *
  * @author Desmond Bennett
  */
-public class FinanceManager implements Serializable,
-        SearchActionListener, LoginActionListener {
+public class FinanceManager implements Serializable, LoginActionListener {
 
     @PersistenceUnit(unitName = "JMTSPU")
     private EntityManagerFactory EMF1;
@@ -768,7 +766,6 @@ public class FinanceManager implements Serializable,
         isActiveClassificationsOnly = true;
 
         getSystemManager().addSingleLoginActionListener(this);
-        getSystemManager().addSingleSearchActionListener(this);
     }
 
     public String getJobCategorySearchText() {
@@ -1061,7 +1058,6 @@ public class FinanceManager implements Serializable,
         return EMF2.createEntityManager();
     }
 
-    @Override
     public void doDefaultSearch() {
         switch (getSystemManager().getDashboard().getSelectedTabId()) {
             case "Financial Management":
