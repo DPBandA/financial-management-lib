@@ -27,7 +27,7 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import jm.com.dpbennett.business.entity.AccountingCode;
+import jm.com.dpbennett.business.entity.fm.AccountingCode;
 import jm.com.dpbennett.business.entity.Classification;
 import jm.com.dpbennett.business.entity.Currency;
 import jm.com.dpbennett.business.entity.DatePeriod;

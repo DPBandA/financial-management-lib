@@ -9,8 +9,8 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import jm.com.dpbennett.business.entity.AccPacCustomer;
-import jm.com.dpbennett.business.entity.AccPacDocument;
+import jm.com.dpbennett.business.entity.fm.AccPacCustomer;
+import jm.com.dpbennett.business.entity.fm.AccPacDocument;
 import org.junit.Test;
 
 /**

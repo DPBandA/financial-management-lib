@@ -17,7 +17,7 @@ import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import jm.com.dpbennett.business.entity.Attachment;
+import jm.com.dpbennett.business.entity.dm.Attachment;
 import jm.com.dpbennett.business.entity.SystemOption;
 import jm.com.dpbennett.sm.util.PrimeFacesUtils;
 import org.primefaces.event.FileUploadEvent;
