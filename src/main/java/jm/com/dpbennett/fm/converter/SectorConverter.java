@@ -24,7 +24,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import jm.com.dpbennett.business.entity.Sector;
+import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.sm.converter.ConverterAdapter;
 
 /**

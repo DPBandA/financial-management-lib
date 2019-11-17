@@ -28,17 +28,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import jm.com.dpbennett.business.entity.fm.AccountingCode;
-import jm.com.dpbennett.business.entity.Classification;
-import jm.com.dpbennett.business.entity.Currency;
+import jm.com.dpbennett.business.entity.fm.Classification;
+import jm.com.dpbennett.business.entity.fm.Currency;
 import jm.com.dpbennett.business.entity.DatePeriod;
-import jm.com.dpbennett.business.entity.Discount;
-import jm.com.dpbennett.business.entity.JobCategory;
-import jm.com.dpbennett.business.entity.JobManagerUser;
-import jm.com.dpbennett.business.entity.JobSubCategory;
-import jm.com.dpbennett.business.entity.Sector;
-import jm.com.dpbennett.business.entity.Service;
-import jm.com.dpbennett.business.entity.Tax;
-import jm.com.dpbennett.business.entity.utils.BusinessEntityUtils;
+import jm.com.dpbennett.business.entity.fm.Discount;
+import jm.com.dpbennett.business.entity.fm.JobCategory;
+import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
+import jm.com.dpbennett.business.entity.fm.JobSubCategory;
+import jm.com.dpbennett.business.entity.fm.Sector;
+import jm.com.dpbennett.business.entity.fm.Service;
+import jm.com.dpbennett.business.entity.fm.Tax;
+import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
 import jm.com.dpbennett.sm.manager.SystemManager;
 import jm.com.dpbennett.sm.manager.SystemManager.LoginActionListener;
 import jm.com.dpbennett.sm.util.BeanUtils;
@@ -101,7 +101,7 @@ public class FinanceManager implements Serializable, LoginActionListener {
     private Boolean isActiveServicesOnly;
 
     /**
-     * Creates a new instance of JobManagerBean
+     * Creates a new instance of FinanceManager.
      */
     public FinanceManager() {
         init();
