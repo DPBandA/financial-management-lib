@@ -30,10 +30,10 @@ import javax.persistence.PersistenceUnit;
 import jm.com.dpbennett.business.entity.fm.AccountingCode;
 import jm.com.dpbennett.business.entity.fm.Classification;
 import jm.com.dpbennett.business.entity.fm.Currency;
-import jm.com.dpbennett.business.entity.DatePeriod;
+import jm.com.dpbennett.business.entity.rm.DatePeriod;
 import jm.com.dpbennett.business.entity.fm.Discount;
 import jm.com.dpbennett.business.entity.fm.JobCategory;
-import jm.com.dpbennett.business.entity.jmts.JobManagerUser;
+import jm.com.dpbennett.business.entity.hrm.User;
 import jm.com.dpbennett.business.entity.fm.JobSubCategory;
 import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.business.entity.fm.Service;
@@ -1026,7 +1026,7 @@ public class FinanceManager implements Serializable, LoginActionListener {
         return EMF1.createEntityManager();
     }
 
-    public JobManagerUser getUser() {
+    public User getUser() {
         return getSystemManager().getUser();
     }
 
