@@ -39,8 +39,8 @@ import jm.com.dpbennett.business.entity.fm.Sector;
 import jm.com.dpbennett.business.entity.fm.Service;
 import jm.com.dpbennett.business.entity.fm.Tax;
 import jm.com.dpbennett.business.entity.util.BusinessEntityUtils;
+import jm.com.dpbennett.sm.Authentication.AuthenticationListener;
 import jm.com.dpbennett.sm.manager.SystemManager;
-import jm.com.dpbennett.sm.manager.SystemManager.LoginActionListener;
 import jm.com.dpbennett.sm.util.BeanUtils;
 import jm.com.dpbennett.sm.util.FinancialUtils;
 import jm.com.dpbennett.sm.util.MainTabView;
@@ -52,7 +52,7 @@ import org.primefaces.PrimeFaces;
  *
  * @author Desmond Bennett
  */
-public class FinanceManager implements Serializable, LoginActionListener {
+public class FinanceManager implements Serializable, AuthenticationListener {
 
     @PersistenceUnit(unitName = "JMTSPU")
     private EntityManagerFactory EMF1;
@@ -716,7 +716,7 @@ public class FinanceManager implements Serializable, LoginActionListener {
     public void doSearch() {
 
         switch (searchType) {
-            
+
             default:
                 break;
         }
@@ -765,7 +765,7 @@ public class FinanceManager implements Serializable, LoginActionListener {
         isActiveServicesOnly = true;
         isActiveClassificationsOnly = true;
 
-        getSystemManager().addSingleLoginActionListener(this);
+        getSystemManager().addSingleAuthenticationListener(this);
     }
 
     public String getJobCategorySearchText() {
@@ -1068,12 +1068,6 @@ public class FinanceManager implements Serializable, LoginActionListener {
         }
     }
 
-    @Override
-    public void doLogin() {
-        initDashboard();
-        initMainTabView();        
-    }
-
     private void initDashboard() {
 
         if (getUser().getModules().getFinancialAdminModule()) {
@@ -1088,6 +1082,17 @@ public class FinanceManager implements Serializable, LoginActionListener {
             getMainTabView().openTab("Financial Administration");
         }
 
+    }
+
+    @Override
+    public void completeLogin() {
+        initDashboard();
+        initMainTabView();
+    }
+
+    @Override
+    public void completeLogout() {
+        System.out.println("Complete logout...");
     }
 
 }
