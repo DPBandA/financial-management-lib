@@ -741,29 +741,7 @@ public class FinanceManager implements Serializable, AuthenticationListener {
     }
 
     private void init() {
-        longProcessProgress = 0;
-        accountingCodeSearchText = "";
-        taxSearchText = "";
-        currencySearchText = "";
-        discountSearchText = "";
-        classificationSearchText = "";
-        sectorSearchText = "";
-        jobCategorySearchText = "";
-        jobSubcategorySearchText = "";
-        serviceSearchText = "";
-        searchType = "Purchase requisitions";
-        dateSearchPeriod = new DatePeriod("This year", "year",
-                "requisitionDate", null, null, null, false, false, false);
-        dateSearchPeriod.initDatePeriod();
-        isActiveDiscountsOnly = true;
-        isActiveTaxesOnly = true;
-        isActiveCurrenciesOnly = true;
-        isActiveAccountingCodesOnly = true;
-        isActiveJobCategoriesOnly = true;
-        isActiveJobSubcategoriesOnly = true;
-        isActiveSectorsOnly = true;
-        isActiveServicesOnly = true;
-        isActiveClassificationsOnly = true;
+        reset();
 
         getSystemManager().addSingleAuthenticationListener(this);
     }
@@ -1019,7 +997,29 @@ public class FinanceManager implements Serializable, AuthenticationListener {
     }
 
     public void reset() {
-        init();
+        longProcessProgress = 0;
+        accountingCodeSearchText = "";
+        taxSearchText = "";
+        currencySearchText = "";
+        discountSearchText = "";
+        classificationSearchText = "";
+        sectorSearchText = "";
+        jobCategorySearchText = "";
+        jobSubcategorySearchText = "";
+        serviceSearchText = "";
+        searchType = "Purchase requisitions";
+        dateSearchPeriod = new DatePeriod("This year", "year",
+                "requisitionDate", null, null, null, false, false, false);
+        dateSearchPeriod.initDatePeriod();
+        isActiveDiscountsOnly = true;
+        isActiveTaxesOnly = true;
+        isActiveCurrenciesOnly = true;
+        isActiveAccountingCodesOnly = true;
+        isActiveJobCategoriesOnly = true;
+        isActiveJobSubcategoriesOnly = true;
+        isActiveSectorsOnly = true;
+        isActiveServicesOnly = true;
+        isActiveClassificationsOnly = true;
     }
 
     public EntityManager getEntityManager1() {
@@ -1092,7 +1092,7 @@ public class FinanceManager implements Serializable, AuthenticationListener {
 
     @Override
     public void completeLogout() {
-        System.out.println("Complete logout...");
+        reset();
     }
 
 }
