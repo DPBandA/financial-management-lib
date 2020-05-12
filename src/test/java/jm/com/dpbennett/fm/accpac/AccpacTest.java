@@ -26,7 +26,7 @@ public class AccpacTest {
 //        prop.put("javax.persistence.jdbc.user",
 //                "root");
 //        prop.put("javax.persistence.jdbc.password",
-//                "?Des12300!"); // TK REMOVE PWD WHEN DONE
+//                ""); // TK REMOVE PWD WHEN DONE
 //        prop.put("javax.persistence.jdbc.url",
 //                "jdbc:mysql://localhost:3306/accpac");
 //        prop.put("javax.persistence.jdbc.driver",
@@ -47,7 +47,7 @@ public class AccpacTest {
         prop.put("javax.persistence.jdbc.user",
                 "root");
         prop.put("javax.persistence.jdbc.password",
-                "?Des12300!"); // TK REMOVE PWD WHEN DONE
+                ""); // TK REMOVE PWD WHEN DONE
         prop.put("javax.persistence.jdbc.url",
                 "jdbc:mysql://localhost:3306/accpac");
         prop.put("javax.persistence.jdbc.driver",
