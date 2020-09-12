@@ -1078,9 +1078,9 @@ public class FinanceManager implements Serializable, AuthenticationListener {
 
     private void initMainTabView() {
 
-        if (getUser().getModules().getFinancialAdminModule()) {
-            getMainTabView().openTab("Financial Administration");
-        }
+//        if (getUser().getModules().getFinancialAdminModule()) {
+//            getMainTabView().openTab("Financial Administration");
+//        }
 
     }
 
